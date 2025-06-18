@@ -1,0 +1,55 @@
+# Model settings
+model:
+  id: "MBZUAI-Paris/Atlas-Chat-9B"
+  device: "auto"  # auto, cuda, or cpu
+  cache_dir: "models/cache"
+  parameters:
+    temperature: 0.2  # Default temperature for first attempt
+    temperatures: [0.2, 0.5, 0.7]  # Multiple temperature attempts
+    max_attempts: 3  # Maximum attempts per temperature
+    top_p: 0.9
+    top_k: 50
+    max_new_tokens: 10
+    repetition_penalty: 1.2
+    do_sample: false
+    num_beams: 1
+    early_stopping: true
+
+# Data settings
+data:
+  paths:
+    train: "data/train.csv"
+    eval: "data/eval.csv"
+  batch_size: 32
+  validation_split: 0.2
+  random_seed: 42
+  max_samples: null  # null for all samples
+
+# Evaluation settings
+evaluation:
+  output_dir: "output/evaluation"
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - entropy
+    - margin
+  confidence_thresholds:
+    high: 0.8  # For high confidence errors
+    low: 0.6   # For low confidence predictions
+    margin: 0.1  # For low margin predictions
+    entropy_percentile: 0.95  # For high entropy predictions
+
+# Category mappings
+categories:
+  "1": "Informations, feedback et demandes"
+  "2": "Support technique"
+  "3": "Transactions financières"
+
+# Paths
+paths:
+  output: "output"
+  logs: "logs/classifications"
+  models: "models"
+  cache: "cache"
