@@ -60,11 +60,11 @@ def main():
         
         # Check device availability
         device_manager = DeviceManager()
-        device = device_manager.get_optimal_device()
-        print(f"   • Optimal device: {device}")
+        device = device_manager.get_best_device()
+        print(f"   • Best device: {device}")
         
-        # Create service factory
-        factory = ServiceFactory()
+        # Create service factory with proper parameters
+        factory = ServiceFactory(config_dir="config", log_level="INFO")
         print(f"   • Service factory created: {factory.__class__.__name__}")
         
     except Exception as e:

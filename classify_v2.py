@@ -115,8 +115,8 @@ Examples:
     try:
         # Create service with dependency injection
         print(" Initializing Darija Classification System...")
-        factory = ServiceFactory()
-        service = factory.create_service(config_dir=args.config, log_level=args.log_level)
+        factory = ServiceFactory(config_dir=args.config, log_level=args.log_level)
+        service = factory.create_classification_service()
         print(" System ready!")
         
         # Determine input texts

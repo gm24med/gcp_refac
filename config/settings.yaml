@@ -3,6 +3,7 @@ model:
   id: "MBZUAI-Paris/Atlas-Chat-9B"
   device: "auto"  # auto, cuda, or cpu
   cache_dir: "models/cache"
+  torch_dtype: "float16"  # float16 for GPU, float32 for CPU
   parameters:
     temperature: 0.2  # Default temperature for first attempt
     temperatures: [0.2, 0.5, 0.7]  # Multiple temperature attempts

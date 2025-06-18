@@ -22,14 +22,14 @@ def main():
         
         # Initialize service factory and classification service
         print("Initializing classification service...")
-        factory = ServiceFactory()
-        service = factory.create_service()
+        factory = ServiceFactory(config_dir="config", log_level="INFO")
+        service = factory.create_classification_service()
         print("Service initialized.\n")
         
         # Example texts
         example_texts = [
             "Service client offline wach kayn chi solution",
-            "wach kayn kifach ndir résiliation", 
+            "wach kayn kifach ndir résiliation",
             "baghi n3ref achmen type de compte 3andy",
             "chno ndir ila bghit n7bes lkhedma meakom",
             "Wash 3ndkoum chi problème m3a réseau"
