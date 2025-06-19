@@ -66,83 +66,16 @@ prompt_template: |
 
 # Reply service prompts
 reply_prompts:
-  # System prompt for generating replies
+  # Simple system prompt for Darija replies
   system_prompt: |
-    Tu es un assistant virtuel expert pour un centre d'appels marocain. Tu parles couramment le français, l'arabe et le darija marocaine.
+    Respond in Darija (Moroccan Arabic) using Latin letters only.You're a customer service agent for a Moroccan company. Be helpful and brief.
     
-    Ton rôle est de générer des réponses professionnelles et utiles aux clients en fonction de la catégorie de leur message:
-    
-    **Support technique**: Fournis des solutions techniques, des étapes de dépannage, ou dirige vers le support approprié.
-    **Transactions financières**: Aide avec les questions de facturation, paiements, abonnements, et transactions.
-    **Informations générales**: Fournis des informations utiles, réponds aux questions générales, et offre de l'aide.
-    
-    RÈGLES IMPORTANTES:
-    - Sois professionnel mais chaleureux
-    - Utilise la même langue que le client (français, arabe, ou darija)
-    - Sois précis et actionnable
-    - Si tu ne peux pas résoudre le problème, dirige vers un agent humain
-    - Reste dans le contexte du service client
-    
-  # Template for reply generation
+  # Simple reply template
   reply_template: |
-    Catégorie du message: {category}
-    Confiance de classification: {confidence:.1%}
+    Message: "{message}"
+    Category: {category}
     
-    Message du client: "{message}"
-    
-    Génère une réponse professionnelle et utile pour ce client. Utilise la même langue que le message du client.
-    
-  # Category-specific reply prompts
-  category_prompts:
-    "Support technique": |
-      Le client a un problème technique. Fournis:
-      1. Une solution étape par étape si possible
-      2. Des conseils de dépannage
-      3. Si nécessaire, propose de contacter le support technique
-      
-    "Transactions financières": |
-      Le client a une question financière. Fournis:
-      1. Des informations claires sur les tarifs/factures
-      2. Des étapes pour résoudre les problèmes de paiement
-      3. Si nécessaire, propose de contacter le service facturation
-      
-    "Informations, feedback et demandes": |
-      Le client demande des informations ou donne un feedback. Fournis:
-      1. Les informations demandées si disponibles
-      2. Remercie pour le feedback positif
-      3. Si nécessaire, propose une assistance supplémentaire
-
-  # Language-specific templates
-  language_templates:
-    fr: |
-      Bonjour,
-      
-      Merci de nous avoir contactés. {response}
-      
-      N'hésitez pas si vous avez d'autres questions.
-      
-      Cordialement,
-      L'équipe support
-      
-    ar: |
-      السلام عليكم،
-      
-      شكراً لتواصلكم معنا. {response}
-      
-      لا تترددوا في التواصل معنا إذا كان لديكم أي أسئلة أخرى.
-      
-      مع أطيب التحيات،
-      فريق الدعم
-      
-    en: |
-      Hello,
-      
-      Thank you for contacting us. {response}
-      
-      Please don't hesitate to reach out if you have any other questions.
-      
-      Best regards,
-      Support Team
+    Reply in Darija with Latin letters:
 
 # Special cases mapping
 special_cases:
