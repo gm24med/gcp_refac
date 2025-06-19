@@ -1,176 +1,389 @@
-# Darija Text Classification System
+# Darija Text Classification System with Gemini Reply Service
 
-A production-grade system for classifying Moroccan Darija text messages using the Atlas-Chat-9B language model. The system implements a robust classification pipeline with uncertainty quantification, comprehensive analysis tools, and production-ready deployment capabilities.
+🚀 **Production-Ready AI Customer Service Solution**
 
-## System Overview
+A sophisticated, enterprise-grade system for classifying Moroccan Darija text messages and generating intelligent replies using Google Gemini. Built with clean architecture principles and designed for GCP Compute Engine deployment.
 
-The system is designed for high-performance text classification with a focus on:
-- Accurate categorization of Darija text messages
-- Quantification of prediction uncertainty
-- Comprehensive performance analysis
-- Production deployment readiness
+## 🌟 Key Features
 
-### Core Components
+### 🔍 **Advanced Text Classification**
+- **Multi-language support**: French, Arabic, Darija (Moroccan Arabic)
+- **High accuracy**: Uses Atlas-Chat-9B model fine-tuned for Darija
+- **Three categories**: Technical Support, Financial Transactions, General Information
+- **Uncertainty quantification**: Entropy, margin, confidence metrics
+- **Batch processing**: Efficient handling of multiple messages
 
-1. **Classification Engine**
-   - Atlas-Chat-9B model integration
-   - Prompt-based classification with probability extraction
-   - Batch processing capabilities
-   - Uncertainty metrics (entropy, margin, confidence)
+### 💬 **Intelligent Reply Generation**
+- **Google Gemini integration**: Powered by Gemini 1.5 Pro/Flash
+- **Context-aware responses**: Replies based on classification results
+- **Multi-language replies**: Automatic language detection and matching
+- **Safety controls**: Built-in content filtering and validation
+- **Fallback mechanisms**: Graceful degradation when AI fails
 
-2. **Analysis Framework**
-   - Uncertainty analysis and visualization
-   - Performance metrics calculation
-   - Error analysis and case mining
-   - Comprehensive reporting
+### 🏗️ **Production-Ready Architecture**
+- **Clean Architecture**: SOLID principles, dependency injection
+- **Scalable design**: Modular components, easy to extend
+- **Comprehensive logging**: Detailed monitoring and debugging
+- **Error handling**: Robust exception management
+- **GCP optimized**: Native Compute Engine integration
 
-3. **Production Infrastructure**
-   - Modular, extensible architecture
-   - Configuration management
-   - Logging and monitoring
-   - Export and deployment utilities
+## 📋 Categories
 
-## Technical Requirements
+| Category | Description | Examples |
+|----------|-------------|----------|
+| **Support technique** | Technical issues, bugs, access problems | "service offline", "connexion problème" |
+| **Transactions financières** | Billing, payments, subscriptions | "annuler abonnement", "problème paiement" |
+| **Informations, feedback et demandes** | General info, feedback, requests | "horaires ouverture", "merci service" |
 
-- Python 3.8+
-- CUDA-capable GPU (recommended)
-- 16GB+ RAM
-- 50GB+ disk space (for model and data)
+## 🚀 Quick Start
 
-## Installation
+### 1. **GCP Compute Engine Setup**
 
-1. **Environment Setup**
    ```bash
-   git clone https://github.com/yourusername/DARIJA_CALL_CENTER.git
-   cd DARIJA_CALL_CENTER
-   python -m venv venv
-   source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-   ```
+# Clone the repository
+git clone <your-repo-url>
+cd gcp_refac
 
-2. **Dependencies**
+# Run the automated setup script
+python setup_gcp.py
+```
+
+### 2. **Manual Setup** (if needed)
+
    ```bash
+# Install dependencies
    pip install -r requirements.txt
-   ```
 
-3. **Configuration**
-   - Model settings: `config/settings.yaml`
-   - Classification prompts: `config/prompt.yaml`
-   - Data paths: Update in settings.yaml
+# Authenticate with GCP
+gcloud auth login
+gcloud auth application-default login
 
-## Usage
+# Set up environment
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export PYTHONPATH=$(pwd)
+```
 
-### Classification API (New Architecture)
+### 3. **Basic Usage**
 
 ```python
-# Modern approach using the new registry system
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+from src.registry import ServiceRegistry
 
-from src.registry import ServiceFactory, ClassificationService
+# Initialize the service
+registry = ServiceRegistry()
+reply_service = registry.get_reply_service()
 
-# Initialize service with dependency injection
-factory = ServiceFactory()
-service = factory.create_service()
+# Classify and generate reply
+result = reply_service.classify_and_reply(
+    message="salam, service dial internet tayh ma kay5dmch",
+    generate_reply=True
+)
 
-# Single prediction
-result = service.classify_text("Your Darija text here")
+print(f"Category: {result.classification_result.category}")
+print(f"Confidence: {result.classification_result.confidence:.1%}")
+print(f"Reply: {result.generated_reply}")
+```
+
+## 🔧 Configuration
+
+### **Main Configuration** (`config/settings.yaml`)
+
+```yaml
+# Model settings
+model:
+  id: "MBZUAI-Paris/Atlas-Chat-9B"
+  device: "cuda:0"  # auto, cuda, or cpu
+  cache_dir: "models/cache"
+  torch_dtype: "float16"
+
+# Gemini settings
+gemini:
+  model_name: "gemini-1.5-pro"  # or gemini-1.5-flash
+  project_id: null  # Auto-detected from GCP
+  location: "us-central1"
+  parameters:
+    temperature: 0.7
+    max_output_tokens: 1024
+  safety_settings:
+    harassment: "BLOCK_MEDIUM_AND_ABOVE"
+    hate_speech: "BLOCK_MEDIUM_AND_ABOVE"
+    sexually_explicit: "BLOCK_MEDIUM_AND_ABOVE"
+    dangerous_content: "BLOCK_MEDIUM_AND_ABOVE"
+
+# Reply service settings
+reply_service:
+  enabled: true
+  default_language: "fr"
+  supported_languages: ["fr", "ar", "en"]
+  max_context_length: 2000
+  include_classification: true
+```
+
+### **Prompts Configuration** (`config/prompt.yaml`)
+
+Contains specialized prompts for:
+- Darija text classification
+- Reply generation by category
+- Language-specific templates
+- Safety and content guidelines
+
+## 💻 Examples
+
+### **Complete Classification + Reply**
+
+```python
+# examples/classify_and_reply.py
+from src.registry import ServiceRegistry
+
+registry = ServiceRegistry()
+reply_service = registry.get_reply_service()
+
+# Test different scenarios
+messages = [
+    "Bonjour, j'ai un problème avec ma connexion internet",
+    "bghit nweqqef l'abonnement w n7bes les paiements", 
+    "chokran bzaf, khdma nqiya w zwina"
+]
+
+for message in messages:
+    result = reply_service.classify_and_reply(message)
+    print(f"Message: {message}")
+    print(f"Category: {result.classification_result.category}")
+    print(f"Reply: {result.generated_reply}")
+    print("-" * 50)
+```
+
+### **Classification Only**
+
+```python
+# For cases where you only need classification
+result = reply_service.classify_only("wach kayn chi problème m3a réseau?")
 print(f"Category: {result.category}")
-print(f"Confidence: {result.confidence:.2%}")
-
-# Batch processing
-results = service.classify_batch(["Text 1", "Text 2", ...])
+print(f"Confidence: {result.confidence:.1%}")
 ```
 
-### Command Line Interface
+### **Reply Only**
 
-1. **Single Text Classification**
-   ```bash
-   python classify_v2.py "Your message in Darija"
-   ```
-
-2. **Batch Classification**
-   ```bash
-   python classify_v2.py --batch "Text 1" "Text 2" "Text 3"
-   ```
-
-3. **File-based Classification**
-   ```bash
-   python classify_v2.py --file texts.txt --verbose
-   ```
-
-## Architecture
-
-The system follows **Clean Architecture** principles with these layers:
-
-- `src/core/`: Business logic (interfaces, classifiers, models, processors)
-- `src/services/`: Application layer (high-level workflows, dependency injection)
-- `src/config/`: Configuration management
-- `src/utils/`: Supporting utilities (device management, logging, exceptions)
-- `src/registry.py`: Centralized exports and imports
-
-### Key Architectural Improvements
-
-✅ **Before**: 398-line monolithic `DarijaClassifier`
-✅ **After**: Multiple focused classes (<50 lines each)
-✅ **SOLID Principles**: Single responsibility, dependency injection
-✅ **Clean Imports**: Centralized registry system
-✅ **Easy Testing**: Interface-based design
-
-## Performance Metrics
-
-The system provides comprehensive performance analysis:
-
-- Classification accuracy and F1 scores
-- Uncertainty metrics (entropy, margin)
-- Confidence calibration
-- Error analysis and case mining
-- Category-wise performance breakdown
-
-## Examples
-
-See the `examples/` directory for working code samples:
-- `examples/classify_text.py`: Basic classification example
-- `examples/using_registry.py`: Registry system demonstration
-
-## Development
-
-### Adding New Features
-
-1. **Model Extensions**
-   - Implement new models in `src/core/models.py`
-   - Update configuration in `config/settings.yaml`
-
-2. **Analysis Tools**
-   - Add utilities in `src/utils/`
-   - Follow interface patterns from `src/core/interfaces.py`
-
-3. **Service Extensions**
-   - Extend `ClassificationService` in `src/services/`
-   - Use dependency injection via `ServiceFactory`
-
-### Testing
-
-```bash
-# Run examples to verify system works
-python examples/classify_text.py
-python examples/using_registry.py
-
-# Test main CLI
-python classify_v2.py "test text" --verbose
+```python
+# For pre-classified messages
+classification = reply_service.classify_only(message)
+reply = reply_service.reply_only(message, classification, language="fr")
+print(f"Generated reply: {reply}")
 ```
 
-## Architecture Documentation
+## 🏗️ Architecture
 
-For detailed architecture information and diagrams:
-- `REFACTORED_ARCHITECTURE.md`: Complete architectural documentation with Mermaid diagrams
-- `VIEW_DIAGRAMS.md`: Instructions for viewing architectural diagrams
+### **Clean Architecture Layers**
 
-## Production Deployment
+```
+┌─────────────────────────────────────────┐
+│                Examples                 │  ← Application Entry Points
+├─────────────────────────────────────────┤
+│            Services Layer               │  ← Business Logic
+│  • ReplyService                        │
+│  • ClassificationService               │
+│  • ReplyServiceFactory                 │
+├─────────────────────────────────────────┤
+│              Core Layer                 │  ← Domain Logic
+│  • Interfaces (IClassifier, IReply)    │
+│  • Models (GeminiClient, Classifiers)  │
+│  • Processors (Language, Reply)        │
+├─────────────────────────────────────────┤
+│           Infrastructure                │  ← External Dependencies
+│  • Config (YAML loaders)               │
+│  • Utils (Logging, Exceptions)         │
+│  • Data (Processors, Formatters)       │
+└─────────────────────────────────────────┘
+```
 
-The system is designed for production deployment with:
+### **Key Components**
 
-- Modular architecture for easy scaling
-- Comprehensive logging and monitoring
-- Configuration management
-- Error handling and validation
+- **ServiceRegistry**: Centralized dependency injection container
+- **ReplyService**: Main application service for classification + reply
+- **GeminiClient**: Google Gemini API integration with retry logic
+- **LanguageDetector**: Multi-language text analysis
+- **ReplyGenerator**: Context-aware response generation
+- **ConfigLoader**: Centralized configuration management
+
+## 📊 Performance & Monitoring
+
+### **Built-in Metrics**
+
+```python
+# Service statistics
+stats = reply_service.get_service_stats()
+print(f"Total requests: {stats['total_requests']}")
+print(f"Reply success rate: {stats['reply_success_rate']:.1f}%")
+
+# Health check
+health = reply_service.health_check()
+print(f"Service operational: {health['service_operational']}")
+```
+
+### **Logging**
+
+- **Structured logging**: JSON format for production
+- **Multiple levels**: DEBUG, INFO, WARNING, ERROR
+- **Request tracking**: Unique request IDs
+- **Performance metrics**: Processing times, success rates
+
+## 🔒 Security & Safety
+
+### **Content Safety**
+- **Gemini safety filters**: Harassment, hate speech, explicit content
+- **Input validation**: Message length, format checks
+- **Output sanitization**: Removes sensitive information patterns
+- **Fallback responses**: Safe defaults when AI fails
+
+### **Authentication**
+- **GCP IAM integration**: Uses Compute Engine service account
+- **API key management**: Secure credential handling
+- **Access controls**: Role-based permissions
+
+## 🚀 Deployment
+
+### **GCP Compute Engine**
+
+1. **Create VM instance** with GPU (optional)
+2. **Enable APIs**: AI Platform, Generative AI
+3. **Set up authentication**: Service account with proper roles
+4. **Run setup script**: `python setup_gcp.py`
+5. **Test deployment**: `python examples/classify_and_reply.py`
+
+### **Production Considerations**
+
+- **Scaling**: Use load balancers for high traffic
+- **Monitoring**: Set up Cloud Monitoring alerts
+- **Logging**: Forward logs to Cloud Logging
+- **Backup**: Regular model and config backups
+- **Updates**: Rolling deployment strategy
+
+## 📈 Advanced Usage
+
+### **Batch Processing**
+
+```python
+# Process multiple messages efficiently
+messages = ["message1", "message2", "message3"]
+results = []
+
+for message in messages:
+    result = reply_service.classify_and_reply(message)
+    results.append(result)
+
+# Analyze batch results
+categories = [r.classification_result.category for r in results]
+avg_confidence = sum(r.confidence_score for r in results) / len(results)
+```
+
+### **Custom Configuration**
+
+```python
+# Use custom configuration
+from config.loader import ConfigLoader
+
+config = ConfigLoader("custom_config")
+registry = ServiceRegistry(config)
+reply_service = registry.get_reply_service()
+```
+
+### **Integration with External Systems**
+
+```python
+# Example: Webhook integration
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+registry = ServiceRegistry()
+reply_service = registry.get_reply_service()
+
+@app.route('/classify-and-reply', methods=['POST'])
+def classify_and_reply():
+    message = request.json.get('message')
+    result = reply_service.classify_and_reply(message)
+    
+    return jsonify({
+        'category': result.classification_result.category,
+        'confidence': result.classification_result.confidence,
+        'reply': result.generated_reply,
+        'language': result.language_detected
+    })
+```
+
+## 🛠️ Development
+
+### **Adding New Languages**
+
+1. Update `config/settings.yaml` supported languages
+2. Add language patterns to `LanguageDetector`
+3. Create language-specific templates in `config/prompt.yaml`
+4. Test with sample messages
+
+### **Extending Categories**
+
+1. Update prompts in `config/prompt.yaml`
+2. Add category mappings in `config/settings.yaml`
+3. Train/fine-tune classification model if needed
+4. Update reply templates
+
+### **Custom Reply Generators**
+
+```python
+from src.core.interfaces import IReplyGenerator
+
+class CustomReplyGenerator(IReplyGenerator):
+    def generate_reply(self, message, classification, language=None):
+        # Your custom logic here
+        return "Custom reply"
+```
+
+## 📚 API Reference
+
+### **ReplyService**
+
+```python
+class ReplyService:
+    def classify_and_reply(message: str, generate_reply: bool = True, 
+                          language: str = None) -> ReplyResult
+    def classify_only(message: str) -> ClassificationResult
+    def reply_only(message: str, classification: ClassificationResult, 
+                  language: str = None) -> str
+    def get_service_stats() -> Dict[str, Any]
+    def health_check() -> Dict[str, Any]
+```
+
+### **ServiceRegistry**
+
+```python
+class ServiceRegistry:
+    def get_reply_service() -> ReplyService
+    def get_classification_service() -> ClassificationService
+    def get_gemini_client() -> GeminiClient
+    def health_check() -> Dict[str, Any]
+    def cleanup() -> None
+```
+
+## 🤝 Contributing
+
+1. **Fork the repository**
+2. **Create feature branch**: `git checkout -b feature/amazing-feature`
+3. **Follow coding standards**: Clean architecture, type hints, docstrings
+4. **Add tests**: Unit tests for new functionality
+5. **Update documentation**: README, docstrings, examples
+6. **Submit pull request**: Detailed description of changes
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Atlas-Chat-9B**: MBZUAI-Paris for the Darija language model
+- **Google Gemini**: Advanced AI capabilities for reply generation
+- **GCP**: Robust cloud infrastructure and AI services
+- **Open Source Community**: Libraries and tools that made this possible
+
+---
+
+**🚀 Ready to deploy your AI-powered customer service solution!**
+
+For support, please open an issue or contact the development team.

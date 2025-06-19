@@ -16,6 +16,28 @@ model:
     num_beams: 1
     early_stopping: true
 
+# Gemini settings for reply service
+gemini:
+  model_name: "gemini-1.5-pro"  # or gemini-1.5-flash for faster responses
+  project_id: null  # Will be auto-detected from GCP environment
+  location: "us-central1"  # GCP region
+  parameters:
+    temperature: 0.7
+    top_p: 0.9
+    top_k: 40
+    max_output_tokens: 1024
+    candidate_count: 1
+  safety_settings:
+    harassment: "BLOCK_MEDIUM_AND_ABOVE"
+    hate_speech: "BLOCK_MEDIUM_AND_ABOVE"
+    sexually_explicit: "BLOCK_MEDIUM_AND_ABOVE"
+    dangerous_content: "BLOCK_MEDIUM_AND_ABOVE"
+  retry_config:
+    max_retries: 3
+    initial_delay: 1.0
+    max_delay: 60.0
+    multiplier: 2.0
+
 # Data settings
 data:
   paths:
@@ -47,6 +69,15 @@ categories:
   "1": "Informations, feedback et demandes"
   "2": "Support technique"
   "3": "Transactions financières"
+
+# Reply service settings
+reply_service:
+  enabled: true
+  default_language: "fr"  # French as default
+  supported_languages: ["fr", "ar", "en"]
+  max_context_length: 2000
+  include_classification: true
+  response_format: "conversational"  # or "formal"
 
 # Paths
 paths:
