@@ -12,19 +12,23 @@ from ..utils.result_formatter import ResultFormatter
 from config.loader import ConfigLoader
 from ..utils.logger import setup_logging
 from .classification_service import ClassificationService
+from typing import Union
 
 
 class ServiceFactory:
     """Factory for creating services with proper dependency injection"""
     
-    def __init__(self, config_dir: str = "config", log_level: str = "INFO"):
+    def __init__(self, config_loader_or_dir: Union[ConfigLoader, str] = "config", log_level: str = "INFO"):
         """Initialize factory with configuration"""
         # Setup logging first
         setup_logging(log_level)
         self.logger = logging.getLogger(__name__)
         
-        # Load configuration
-        self.config_loader = ConfigLoader(config_dir)
+        # Handle both ConfigLoader object and config directory string
+        if isinstance(config_loader_or_dir, ConfigLoader):
+            self.config_loader = config_loader_or_dir
+        else:
+            self.config_loader = ConfigLoader(config_loader_or_dir)
         self.logger.info("Configuration loaded successfully")
     
     def create_device_manager(self) -> DeviceManager:
