@@ -62,7 +62,7 @@ class ReplyServiceFactory:
         
         # Create classifier if not provided
         if classifier is None:
-            service_factory = ServiceFactory(self.config_loader)
+            service_factory = ServiceFactory()
             classifier = service_factory.create_classifier()
         
         # Create reply generator

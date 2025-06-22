@@ -6,6 +6,9 @@ import logging
 from ..core.classifier import TextClassifier
 from ..core.models import ModelFactory
 from ..core.processors import TextProcessor
+from ..utils.device_manager import DeviceManager
+from ..utils.uncertainty_calculator import UncertaintyCalculator
+from ..utils.result_formatter import ResultFormatter
 from config.loader import ConfigLoader
 from ..utils.logger import setup_logging
 from .classification_service import ClassificationService
@@ -24,15 +27,38 @@ class ServiceFactory:
         self.config_loader = ConfigLoader(config_dir)
         self.logger.info("Configuration loaded successfully")
     
+    def create_device_manager(self) -> DeviceManager:
+        """Create device manager"""
+        return DeviceManager()
+    
+    def create_text_processor(self) -> TextProcessor:
+        """Create text processor"""
+        return TextProcessor(self.config_loader)
+    
+    def create_model_loader(self):
+        """Create model loader"""
+        return ModelFactory.create_loader(self.config_loader)
+    
+    def create_classifier(self) -> TextClassifier:
+        """Create classifier"""
+        text_processor = self.create_text_processor()
+        model_loader = self.create_model_loader()
+        return TextClassifier(config_loader=self.config_loader, model_loader=model_loader, text_processor=text_processor)
+    
+    def create_uncertainty_calculator(self) -> UncertaintyCalculator:
+        """Create uncertainty calculator"""
+        return UncertaintyCalculator()
+    
+    def create_result_formatter(self) -> ResultFormatter:
+        """Create result formatter"""
+        return ResultFormatter(self.config_loader)
+    
     def create_classification_service(self) -> ClassificationService:
         """Create fully configured classification service"""
         self.logger.info("Creating classification service...")
         
-        # Create dependencies
-        text_processor = TextProcessor(self.config_loader)
-        model_loader = ModelFactory.create_loader(self.config_loader)
         # Create classifier
-        classifier = TextClassifier(config_loader=self.config_loader,model_loader=model_loader,text_processor=text_processor)
+        classifier = self.create_classifier()
         # Create service
         service = ClassificationService(classifier)
         self.logger.info("Classification service created successfully")

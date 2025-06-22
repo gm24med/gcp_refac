@@ -3,6 +3,7 @@ Centralized registry for all package exports
 Moved from __init__.py files for cleaner architecture
 """
 
+import time
 from typing import Optional, Dict, Any
 
 __version__ = "1.0.0"
@@ -167,7 +168,7 @@ class ServiceRegistry:
     def __init__(self, config_loader: Optional[ConfigLoader] = None):
         """Initialize registry with configuration"""
         self.config_loader = config_loader or ConfigLoader()
-        self.logger = create_logger(__name__)
+        self.logger = create_logger("ServiceRegistry")
         
         # Service factories
         self._service_factory = None
