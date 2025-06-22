@@ -1,4 +1,4 @@
-# Darija Text Classification System with Gemini Reply Service
+# Darija Text Classification System + Gemini Reply Service with Gemini Reply Service
 
 🚀 **Production-Ready AI Customer Service Solution**
 
