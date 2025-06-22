@@ -3,6 +3,8 @@ Centralized registry for all package exports
 Moved from __init__.py files for cleaner architecture
 """
 
+from typing import Optional, Dict, Any
+
 __version__ = "1.0.0"
 __author__ = "Your Team"
 __email__ = "your.email@domain.com"

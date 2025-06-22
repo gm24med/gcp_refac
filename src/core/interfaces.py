@@ -35,7 +35,7 @@ class GeminiConfig:
     """Gemini configuration parameters"""
     model_name: str
     project_id: Optional[str]
-    location: str
+    secret_name: str
     temperature: float
     top_p: float
     top_k: int

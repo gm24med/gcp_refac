@@ -6,12 +6,12 @@ import google.generativeai as genai
 import time
 import logging
 from typing import Dict, Any, Optional
-from google.cloud import aiplatform
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 from .interfaces import IGeminiClient, GeminiConfig
 from config.loader import ConfigLoader
 from ..utils.exceptions import ModelLoadError, ConfigurationError
+from ..utils.secret_manager import GeminiSecretManager
 
 
 class GeminiClientValidator:
@@ -20,7 +20,7 @@ class GeminiClientValidator:
     def __init__(self):
         """Initialize validator"""
         self.required_config_fields = [
-            'model_name', 'location', 'temperature', 'top_p', 'top_k',
+            'model_name', 'secret_name', 'temperature', 'top_p', 'top_k',
             'max_output_tokens', 'candidate_count'
         ]
     
@@ -29,6 +29,10 @@ class GeminiClientValidator:
         for field in self.required_config_fields:
             if not hasattr(config, field) or getattr(config, field) is None:
                 raise ConfigurationError(f"Missing required Gemini config field: {field}")
+        
+        # Validate secret name
+        if not config.secret_name or not config.secret_name.strip():
+            raise ConfigurationError("Secret name is required for Secret Manager integration.")
         
         # Validate parameter ranges
         if not 0.0 <= config.temperature <= 2.0:
@@ -42,14 +46,15 @@ class GeminiClientValidator:
         
         return True
     
-    def validate_credentials(self) -> bool:
-        """Validate GCP credentials"""
+    def validate_credentials(self, api_key: str) -> bool:
+        """Validate API key by testing connection"""
         try:
-            # Try to initialize aiplatform (will use default credentials)
-            aiplatform.init()
+            # Test API key by listing models
+            genai.configure(api_key=api_key)
+            list(genai.list_models())
             return True
         except Exception as e:
-            raise ConfigurationError(f"GCP credentials validation failed: {e}")
+            raise ConfigurationError(f"Invalid Gemini API key: {e}")
 
 
 class GeminiSafetyManager:
@@ -133,12 +138,21 @@ class GeminiClient(IGeminiClient):
             # Get configuration
             gemini_config = self.config_loader.get_gemini_config()
             
-            # Validate configuration and credentials
+            # Validate configuration
             self.validator.validate_config(gemini_config)
-            self.validator.validate_credentials()
             
-            # Configure Gemini
-            genai.configure()  # Uses default GCP credentials
+            # Get API key from Secret Manager
+            secret_manager = GeminiSecretManager(
+                project_id=gemini_config.project_id,
+                secret_name=gemini_config.secret_name
+            )
+            api_key = secret_manager.get_api_key()
+            
+            # Validate credentials
+            self.validator.validate_credentials(api_key)
+            
+            # Configure Gemini with API key from Secret Manager
+            genai.configure(api_key=api_key)
             
             # Setup safety and retry managers
             self.safety_manager = GeminiSafetyManager(gemini_config.safety_settings)
@@ -159,7 +173,7 @@ class GeminiClient(IGeminiClient):
             )
             
             self.is_initialized = True
-            self.logger.info("Gemini client initialized successfully")
+            self.logger.info("Gemini client initialized successfully with Secret Manager")
             
         except Exception as e:
             self.logger.error(f"Failed to initialize Gemini client: {e}")

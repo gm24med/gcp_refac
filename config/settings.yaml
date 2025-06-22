@@ -18,14 +18,15 @@ model:
 
 # Gemini settings for reply service
 gemini:
-  model_name: "gemini-1.5-pro"  # or gemini-1.5-flash for faster responses
-  project_id: null  # Will be auto-detected from GCP environment
-  location: "us-central1"  # GCP region
+  model_name: "gemini-1.5-flash"  # Fast and cost-effective model
+  secret_manager:
+    project_id: null  # Will be auto-detected from GCP environment
+    secret_name: "gemini-api-key"  # Name of secret in Secret Manager
   parameters:
     temperature: 0.7
     top_p: 0.9
     top_k: 40
-    max_output_tokens: 1024
+    max_output_tokens: 200  # Reduced for cost efficiency
     candidate_count: 1
   safety_settings:
     harassment: "BLOCK_MEDIUM_AND_ABOVE"

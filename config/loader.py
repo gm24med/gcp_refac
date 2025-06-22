@@ -35,14 +35,16 @@ class ConfigLoader:
     def get_gemini_config(self) -> GeminiConfig:
         """Get Gemini configuration"""
         gemini_settings = self._settings.get("gemini", {})
+        secret_manager_config = gemini_settings.get("secret_manager", {})
+        
         return GeminiConfig(
-            model_name=gemini_settings.get("model_name", "gemini-1.5-pro"),
-            project_id=gemini_settings.get("project_id"),
-            location=gemini_settings.get("location", "us-central1"),
+            model_name=gemini_settings.get("model_name", "gemini-1.5-flash"),
+            project_id=secret_manager_config.get("project_id"),
+            secret_name=secret_manager_config.get("secret_name", "gemini-api-key"),
             temperature=gemini_settings.get("parameters", {}).get("temperature", 0.7),
             top_p=gemini_settings.get("parameters", {}).get("top_p", 0.9),
             top_k=gemini_settings.get("parameters", {}).get("top_k", 40),
-            max_output_tokens=gemini_settings.get("parameters", {}).get("max_output_tokens", 1024),
+            max_output_tokens=gemini_settings.get("parameters", {}).get("max_output_tokens", 200),
             candidate_count=gemini_settings.get("parameters", {}).get("candidate_count", 1),
             safety_settings=gemini_settings.get("safety_settings", {}),
             retry_config=gemini_settings.get("retry_config", {})
