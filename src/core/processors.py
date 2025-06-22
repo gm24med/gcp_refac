@@ -55,7 +55,7 @@ class PromptBuilder:
         """Initialize with configuration"""
         self.config = config_loader
         self.template = self.config.get_prompt_template()
-        self.system_prompt = self.config.get_system_prompt()
+        self.system_prompt = self.config.get_classification_prompt()
     
     def build(self, text: str) -> str:
         """Build classification prompt"""

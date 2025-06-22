@@ -14,7 +14,7 @@ class ResultFormatter:
     def __init__(self, config_loader: ConfigLoader):
         """Initialize with configuration"""
         self.config_loader = config_loader
-        self.category_map = config_loader.get_category_mapping()
+        self.category_map = config_loader.get_categories()
     
     def format_result(self, 
                      text: str,
