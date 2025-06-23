@@ -70,6 +70,10 @@ class ConfigLoader:
         """Get category mappings"""
         return self._settings['categories']
     
+    def get_model_id(self) -> str:
+        """Get model ID"""
+        return self._settings['model']['id']
+    
     def get_model_parameters(self) -> Dict[str, Any]:
         """Get model generation parameters"""
         return self._settings['model']['parameters']

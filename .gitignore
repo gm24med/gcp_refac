@@ -138,4 +138,7 @@ outputs/
 .env.local
 .env.production
 secrets.yaml
-api_keys.txt 
+api_keys.txt
+
+*ARCHITECTURE*.md
+*.architecture.md 

@@ -119,9 +119,9 @@ class IReplyGenerator(ABC):
     @abstractmethod
     def generate_reply(self, 
                       message: str, 
-                      classification_result: ClassificationResult,
-                      language: str = None) -> str:
-        """Generate a reply based on the message and classification"""
+                      language: str = None,
+                      classification_result: ClassificationResult = None) -> str:
+        """Generate a reply based on the message (classification is optional)"""
         pass
     
     @abstractmethod

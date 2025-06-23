@@ -1,13 +1,13 @@
 # Model settings
 model:
   id: "MBZUAI-Paris/Atlas-Chat-9B"
-  device: "cuda:0"  # auto, cuda, or cpu
+  device: "cuda:0"
   cache_dir: "models/cache"
-  torch_dtype: "float16"  # float16 for GPU, float32 for CPU
+  torch_dtype: "float16"
   parameters:
-    temperature: 0.2  # Default temperature for first attempt
-    temperatures: [0.2, 0.5, 0.7]  # Multiple temperature attempts
-    max_attempts: 3  # Maximum attempts per temperature
+    temperature: 0.2
+    temperatures: [0.2, 0.5, 0.7]
+    max_attempts: 3
     top_p: 0.9
     top_k: 50
     max_new_tokens: 10
@@ -18,15 +18,15 @@ model:
 
 # Gemini settings for reply service
 gemini:
-  model_name: "gemini-1.5-flash"  # Fast and cost-effective model
+  model_name: "gemini-1.5-flash"
   secret_manager:
-    project_id: null  # Will be auto-detected from GCP environment
-    secret_name: "gemini-api-key"  # Name of secret in Secret Manager
+    project_id: null
+    secret_name: "gemini-api-key"
   parameters:
     temperature: 0.7
     top_p: 0.9
     top_k: 40
-    max_output_tokens: 200  # Reduced for cost efficiency
+    max_output_tokens: 200
     candidate_count: 1
   safety_settings:
     harassment: "BLOCK_MEDIUM_AND_ABOVE"
@@ -39,32 +39,6 @@ gemini:
     max_delay: 60.0
     multiplier: 2.0
 
-# Data settings
-data:
-  paths:
-    train: "data/train.csv"
-    eval: "data/eval.csv"
-  batch_size: 32
-  validation_split: 0.2
-  random_seed: 42
-  max_samples: null  # null for all samples
-
-# Evaluation settings
-evaluation:
-  output_dir: "output/evaluation"
-  metrics:
-    - accuracy
-    - precision
-    - recall
-    - f1
-    - entropy
-    - margin
-  confidence_thresholds:
-    high: 0.8  # For high confidence errors
-    low: 0.6   # For low confidence predictions
-    margin: 0.1  # For low margin predictions
-    entropy_percentile: 0.95  # For high entropy predictions
-
 # Category mappings
 categories:
   "1": "Informations, feedback et demandes"
@@ -74,15 +48,5 @@ categories:
 # Reply service settings
 reply_service:
   enabled: true
-  default_language: "fr"  # French as default
-  supported_languages: ["fr", "ar", "en"]
-  max_context_length: 2000
-  include_classification: true
-  response_format: "conversational"  # or "formal"
-
-# Paths
-paths:
-  output: "output"
-  logs: "logs/classifications"
-  models: "models"
-  cache: "cache"
+  default_language: "fr"
+  supported_languages: ["fr", "ar", "en"] 

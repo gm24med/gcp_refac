@@ -56,7 +56,7 @@ class ReplyService:
             if generate_reply and self.reply_generator.is_service_ready():
                 try:
                     generated_reply = self.reply_generator.generate_reply(
-                        message, classification_result, language
+                        message, language, classification_result
                     )
                     self.reply_count += 1
                     self.logger.info("Reply generated successfully")
@@ -98,9 +98,9 @@ class ReplyService:
     
     def reply_only(self, 
                    message: str, 
-                   classification_result: ClassificationResult,
-                   language: str = None) -> str:
-        """Generate reply only for pre-classified message"""
+                   language: str = None,
+                   classification_result: ClassificationResult = None) -> str:
+        """Generate reply only (classification is optional)"""
         self._validate_message_input(message)
         
         if not self.reply_generator.is_service_ready():
@@ -108,7 +108,7 @@ class ReplyService:
         
         try:
             self.logger.info("Processing reply-only request")
-            reply = self.reply_generator.generate_reply(message, classification_result, language)
+            reply = self.reply_generator.generate_reply(message, language, classification_result)
             self.reply_count += 1
             self.logger.info("Reply-only generation completed")
             return reply

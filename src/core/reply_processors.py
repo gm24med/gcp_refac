@@ -66,25 +66,30 @@ class PromptBuilder:
     
     def build_reply_prompt(self, 
                           message: str, 
-                          classification_result: ClassificationResult,
-                          language: str) -> str:
-        """Build prompt for reply generation"""
+                          language: str,
+                          classification_result: ClassificationResult = None) -> str:
+        """Build prompt for reply generation (classification is optional)"""
         if not message:
             raise ValidationError("Message cannot be empty")
         
         # Get system prompt
         system_prompt = self.reply_prompts.get('system_prompt', '')
         
-        # Get category-specific prompt
-        category_prompt = self.category_prompts.get(classification_result.category, '')
-        
         # Build the complete prompt
-        prompt = f"{system_prompt}\n\n{category_prompt}\n\n"
-        prompt += self.reply_prompts.get('reply_template', '').format(
-            category=classification_result.category,
-            confidence=classification_result.confidence,
-            message=message
-        )
+        if classification_result:
+            # Use classification-aware template
+            category_prompt = self.category_prompts.get(classification_result.category, '')
+            prompt = f"{system_prompt}\n\n{category_prompt}\n\n"
+            prompt += self.reply_prompts.get('reply_template', '').format(
+                category=classification_result.category,
+                confidence=classification_result.confidence,
+                message=message
+            )
+        else:
+            # Use simple template without classification
+            simple_template = self.reply_prompts.get('simple_template', 
+                'Message: "{message}"\n\nReply in Darija with Latin letters:')
+            prompt = f"{system_prompt}\n\n{simple_template}".format(message=message)
         
         return prompt
     
@@ -158,9 +163,9 @@ class ReplyGenerator(IReplyGenerator):
     
     def generate_reply(self, 
                       message: str, 
-                      classification_result: ClassificationResult,
-                      language: str = None) -> str:
-        """Generate reply based on message and classification"""
+                      language: str = None,
+                      classification_result: ClassificationResult = None) -> str:
+        """Generate reply based on message (classification is optional)"""
         try:
             # Detect language if not provided
             if not language:
@@ -168,7 +173,7 @@ class ReplyGenerator(IReplyGenerator):
             
             # Build prompt for reply generation
             prompt = self.prompt_builder.build_reply_prompt(
-                message, classification_result, language
+                message, language, classification_result
             )
             
             # Generate reply using Gemini
@@ -177,19 +182,22 @@ class ReplyGenerator(IReplyGenerator):
             # Validate and sanitize reply
             if not self.validator.validate_reply(generated_reply):
                 self.logger.warning("Generated reply failed validation, using fallback")
-                generated_reply = self._get_fallback_reply(classification_result.category, language)
+                category = classification_result.category if classification_result else "General"
+                generated_reply = self._get_fallback_reply(category, language)
             
             sanitized_reply = self.validator.sanitize_reply(generated_reply)
             
             # Format final reply with language template
             final_reply = self.prompt_builder.format_final_reply(sanitized_reply, language)
             
-            self.logger.info(f"Reply generated successfully for category: {classification_result.category}")
+            category_info = f" for category: {classification_result.category}" if classification_result else ""
+            self.logger.info(f"Reply generated successfully{category_info}")
             return final_reply
             
         except Exception as e:
             self.logger.error(f"Reply generation failed: {e}")
-            return self._get_fallback_reply(classification_result.category, language or 'fr')
+            category = classification_result.category if classification_result else "General"
+            return self._get_fallback_reply(category, language or 'fr')
     
     def _get_fallback_reply(self, category: str, language: str) -> str:
         """Get fallback reply when generation fails"""
@@ -197,17 +205,20 @@ class ReplyGenerator(IReplyGenerator):
             'fr': {
                 'Support technique': "Merci pour votre message. Notre équipe technique va examiner votre demande et vous contacter rapidement.",
                 'Transactions financières': "Merci pour votre demande. Notre service facturation va traiter votre requête dans les plus brefs délais.",
-                'Informations, feedback et demandes': "Merci pour votre message. Nous avons bien reçu votre demande et vous répondrons prochainement."
+                'Informations, feedback et demandes': "Merci pour votre message. Nous avons bien reçu votre demande et vous répondrons prochainement.",
+                'General': "Merci pour votre message. Nous vous répondrons prochainement."
             },
             'ar': {
                 'Support technique': "شكراً لرسالتكم. فريق الدعم التقني سيفحص طلبكم ويتواصل معكم قريباً.",
                 'Transactions financières': "شكراً لطلبكم. خدمة الفوترة ستعالج استفساركم في أقرب وقت ممكن.",
-                'Informations, feedback et demandes': "شكراً لرسالتكم. لقد استلمنا طلبكم وسنرد عليكم قريباً."
+                'Informations, feedback et demandes': "شكراً لرسالتكم. لقد استلمنا طلبكم وسنرد عليكم قريباً.",
+                'General': "شكراً لرسالتكم. سنرد عليكم قريباً."
             },
             'en': {
                 'Support technique': "Thank you for your message. Our technical team will review your request and contact you shortly.",
                 'Transactions financières': "Thank you for your request. Our billing service will process your inquiry as soon as possible.",
-                'Informations, feedback et demandes': "Thank you for your message. We have received your request and will respond to you soon."
+                'Informations, feedback et demandes': "Thank you for your message. We have received your request and will respond to you soon.",
+                'General': "Thank you for your message. We will respond to you soon."
             }
         }
         

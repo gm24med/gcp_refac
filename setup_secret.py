@@ -8,7 +8,6 @@ Usage:
 import sys
 from pathlib import Path
 
-# Add src to path
 sys.path.append(str(Path(__file__).parent))
 
 from src.utils.secret_manager import GeminiSecretManager
@@ -30,10 +29,7 @@ def main():
     try:
         print("🔐 Setting up Gemini API key in Google Secret Manager...")
         
-        # Initialize secret manager
         secret_manager = GeminiSecretManager()
-        
-        # Store the API key
         created = secret_manager.setup_api_key(api_key)
         
         if created:

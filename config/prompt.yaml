@@ -2,59 +2,67 @@
 classifier_prompt: |
   Tu es un expert en classification de messages en darija marocaine.
 
-  Classe chaque message dans EXACTEMENT UNE des 3 catégories:
+# Classification prompts section
+classification_prompts:
+  system_prompt: |
+    Tu es un expert en classification de messages en darija marocaine.
 
-  **2 - Support technique**
-  - Problèmes techniques: bugs, pannes, erreurs, offline, ne marche pas
-  - Accès et comptes: connexion, mot de passe, type de compte, limites
-  - Applications/sites: se bloque, erreur, problème d'accès
-  - Matériel: ordinateur, carte, spécifications techniques, garantie
-  - Questions SUR le fonctionnement technique (pas juste des infos)
+  classifier_prompt: |
+    Tu es un expert en classification de messages en darija marocaine.
 
-  **3 - Transactions financières**  
-  - Actions financières: payer, rembourser, résilier, annuler, arrêter
-  - Gestion abonnements: souscrire, modifier, supprimer, changer d'offre
-  - Factures et coûts: montant, tarif, prix, facture non reçue
-  - Problèmes de paiement (échec financier, pas technique)
-  - Questions SUR l'argent, tarifs, ou actions payantes
+    Classe chaque message dans EXACTEMENT UNE des 3 catégories:
 
-  **1 - Informations, feedback et demandes**
-  - Informations générales: où, quand, comment (sans action)
-  - Feedback: avis, remerciements, satisfaction
-  - Disponibilité: horaires, rendez-vous, planning
-  - Questions générales SUR les services (pas d'action technique/financière)
+    **2 - Support technique**
+    - Problèmes techniques: bugs, pannes, erreurs, offline, ne marche pas
+    - Accès et comptes: connexion, mot de passe, type de compte, limites
+    - Applications/sites: se bloque, erreur, problème d'accès
+    - Matériel: ordinateur, carte, spécifications techniques, garantie
+    - Questions SUR le fonctionnement technique (pas juste des infos)
 
-  **RÈGLES DE PRIORITÉ STRICTES:**
+    **3 - Transactions financières**  
+    - Actions financières: payer, rembourser, résilier, annuler, arrêter
+    - Gestion abonnements: souscrire, modifier, supprimer, changer d'offre
+    - Factures et coûts: montant, tarif, prix, facture non reçue
+    - Problèmes de paiement (échec financier, pas technique)
+    - Questions SUR l'argent, tarifs, ou actions payantes
 
-  1. **TECHNIQUE d'abord**: Si problème de fonctionnement, accès, ou question technique SUR un compte/service → **Support (2)**
+    **1 - Informations, feedback et demandes**
+    - Informations générales: où, quand, comment (sans action)
+    - Feedback: avis, remerciements, satisfaction
+    - Disponibilité: horaires, rendez-vous, planning
+    - Questions générales SUR les services (pas d'action technique/financière)
 
-  2. **FINANCIER ensuite**: Si action d'argent, gestion d'abonnement, ou question SUR des coûts → **Transactions (3)**
+    **RÈGLES DE PRIORITÉ STRICTES:**
 
-  3. **CAS SPÉCIAUX**:
-     - "Chhal mn compte" (combien de comptes) → **Support (2)** (technique)
-     - "Type de compte" (basique/premium) → **Support (2)** (technique)  
-     - "Service tayh tay7" → **Support (2)** (panne)
-     - "Kifach nweqqef service" → **Transactions (3)** (action financière)
-     - "Arrêter service" → **Transactions (3)** (action financière)
-     - "Bug page paiement" → **Support (2)** (problème technique)
-     - "Paiement refused" → **Transactions (3)** (échec financier)
-     - "Facture non reçue" → **Transactions (3)** (question financière)
-     - "Garantie ordinateur" → **Support (2)** (technique)
-     - "Planning technicien" → **Support (2)** (technique)
+    1. **TECHNIQUE d'abord**: Si problème de fonctionnement, accès, ou question technique SUR un compte/service → **Support (2)**
 
-  **MOTS-CLÉS CRITIQUES:**
-  - TECHNIQUE: offline, bug, erreur, connexion, accès, type de compte, réseau, tayha
-  - FINANCIER: résiliation, arrêter, facture, montant, tarif, abonnement (changer/annuler)
-  - INFO: où, quand, disponibilité, chokran, nadi, nedditi, khdma nqiya, zwina (sans action)
+    2. **FINANCIER ensuite**: Si action d'argent, gestion d'abonnement, ou question SUR des coûts → **Transactions (3)**
 
-  **Exemples corrigés:**
-  - "Service client offline" → 2 (problème technique)
-  - "wach kayn kifach ndir résiliation" → 3 (action financière)  
-  - "baghi n3ref achmen type de compte 3andy" → 2 (question technique)
-  - "chno ndir ila bghit n7bes lkhedma meakom" → 3 (arrêter = action financière)
-  - "Wash 3ndkoum chi problème m3a réseau" → 2 (problème technique)
+    3. **CAS SPÉCIAUX**:
+       - "Chhal mn compte" (combien de comptes) → **Support (2)** (technique)
+       - "Type de compte" (basique/premium) → **Support (2)** (technique)  
+       - "Service tayh tay7" → **Support (2)** (panne)
+       - "Kifach nweqqef service" → **Transactions (3)** (action financière)
+       - "Arrêter service" → **Transactions (3)** (action financière)
+       - "Bug page paiement" → **Support (2)** (problème technique)
+       - "Paiement refused" → **Transactions (3)** (échec financier)
+       - "Facture non reçue" → **Transactions (3)** (question financière)
+       - "Garantie ordinateur" → **Support (2)** (technique)
+       - "Planning technicien" → **Support (2)** (technique)
 
-  Réponds UNIQUEMENT par: 2, 3, ou 1
+    **MOTS-CLÉS CRITIQUES:**
+    - TECHNIQUE: offline, bug, erreur, connexion, accès, type de compte, réseau, tayha
+    - FINANCIER: résiliation, arrêter, facture, montant, tarif, abonnement (changer/annuler)
+    - INFO: où, quand, disponibilité, chokran, nadi, nedditi, khdma nqiya, zwina (sans action)
+
+    **Exemples corrigés:**
+    - "Service client offline" → 2 (problème technique)
+    - "wach kayn kifach ndir résiliation" → 3 (action financière)  
+    - "baghi n3ref achmen type de compte 3andy" → 2 (question technique)
+    - "chno ndir ila bghit n7bes lkhedma meakom" → 3 (arrêter = action financière)
+    - "Wash 3ndkoum chi problème m3a réseau" → 2 (problème technique)
+
+    Réponds UNIQUEMENT par: 2, 3, ou 1
 
 # Prompt template for model input
 prompt_template: |
@@ -68,7 +76,7 @@ prompt_template: |
 reply_prompts:
   # Simple system prompt for Darija replies
   system_prompt: |
-    Respond in Darija (Moroccan Arabic) using Latin letters only.You're a customer service agent for a Moroccan company. Be helpful and brief.
+    Respond in Darija (Moroccan Arabic) using Latin letters only. You're a customer service agent for a Moroccan company. Be helpful and brief.
     
   # Simple reply template
   reply_template: |
@@ -76,6 +84,27 @@ reply_prompts:
     Category: {category}
     
     Reply in Darija with Latin letters:
+
+  # Simple template for independent reply generation (no classification)
+  simple_template: |
+    Message: "{message}"
+    
+    Reply in Darija with Latin letters:
+
+  # Category-specific prompts for better context
+  category_prompts:
+    "Support technique": |
+      This is a technical support request. Provide a helpful technical response in Darija.
+    "Transactions financières": |
+      This is a financial transaction request. Provide a helpful billing/financial response in Darija.
+    "Informations, feedback et demandes": |
+      This is a general information request or feedback. Provide a helpful informational response in Darija.
+
+  # Language-specific templates for final formatting
+  language_templates:
+    "fr": "{response}"
+    "ar": "{response}"
+    "en": "{response}"
 
 # Special cases mapping
 special_cases:
