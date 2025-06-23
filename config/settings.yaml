@@ -23,10 +23,10 @@ gemini:
     project_id: null
     secret_name: "gemini-api-key"
   parameters:
-    temperature: 0.7
+    temperature: 0.3
     top_p: 0.9
     top_k: 40
-    max_output_tokens: 200
+    max_output_tokens: 500
     candidate_count: 1
   safety_settings:
     harassment: "BLOCK_MEDIUM_AND_ABOVE"

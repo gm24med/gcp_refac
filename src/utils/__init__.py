@@ -1,1 +1,0 @@
-# Empty __init__.py - Content moved to src/registry.py 

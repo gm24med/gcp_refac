@@ -1,6 +1,5 @@
 """
 Centralized registry for all package exports
-Moved from __init__.py files for cleaner architecture
 """
 
 import time
@@ -8,27 +7,22 @@ from typing import Optional, Dict, Any
 
 __version__ = "1.0.0"
 __author__ = "Your Team"
-__email__ = "your.email@domain.com"
+__email__ = "Mohamed.gouali@artefact.com"
 
-# ===== CORE COMPONENTS =====
 try:
-    # Try relative imports first (when imported as a package)
     from .core.interfaces import IClassifier, IModelLoader, ITextProcessor
     from .core.classifier import TextClassifier
     from .core.models import ModelFactory, ModelLoader
     from .core.processors import TextProcessor, PromptBuilder
 except ImportError:
     try:
-        # Fallback for direct execution or when src is in path
         from core.interfaces import IClassifier, IModelLoader, ITextProcessor
         from core.classifier import TextClassifier
         from core.models import ModelFactory, ModelLoader
         from core.processors import TextProcessor, PromptBuilder
     except ImportError as e:
-        # If still failing, provide a more helpful error
         raise ImportError(f"Could not import core components. Ensure dependencies are installed and paths are correct: {e}")
-
-# ===== SERVICES =====
+    
 try:
     from .services.classification_service import ClassificationService
     from .services.factory import ServiceFactory
@@ -43,13 +37,11 @@ except ImportError:
     except ImportError as e:
         raise ImportError(f"Could not import services. Check dependencies: {e}")
 
-# ===== CONFIGURATION =====
 try:
     from config.loader import ConfigLoader
 except ImportError as e:
     raise ImportError(f"Could not import config loader: {e}")
 
-# ===== UTILITIES =====
 try:
     from .utils.device_manager import DeviceManager
     from .utils.uncertainty_calculator import UncertaintyCalculator
@@ -76,8 +68,6 @@ except ImportError:
     except ImportError as e:
         raise ImportError(f"Could not import utilities: {e}")
 
-
-# ===== EXPORTS BY CATEGORY =====
 
 CORE_EXPORTS = [
     'IClassifier',
@@ -113,7 +103,6 @@ UTILITY_EXPORTS = [
     'setup_logging'
 ]
 
-# ===== COMPLETE EXPORT LIST =====
 __all__ = (
     CORE_EXPORTS +
     SERVICE_EXPORTS + 
@@ -121,8 +110,6 @@ __all__ = (
     UTILITY_EXPORTS
 )
 
-
-# ===== CONVENIENCE FUNCTIONS =====
 
 def get_main_classifier():
     """Get the main text classifier - most common use case"""
@@ -144,17 +131,14 @@ def get_all_exceptions():
 def check_imports():
     """Check if all imports are working properly"""
     try:
-        # Test core imports
         TextClassifier
         ModelFactory
         
-        # Test service imports  
         ClassificationService
         ServiceFactory
         ReplyServiceFactory
         ReplyService
         
-        # Test utility imports
         DeviceManager
         ClassificationError
         
@@ -169,16 +153,13 @@ class ServiceRegistry:
         """Initialize registry with configuration"""
         self.config_loader = config_loader or ConfigLoader()
         self.logger = create_logger("ServiceRegistry")
-        
-        # Service factories
+
         self._service_factory = None
         self._reply_service_factory = None
         
-        # Core services
         self._classification_service = None
         self._reply_service = None
         
-        # Models and processors
         self._device_manager = None
         self._text_processor = None
         self._model_loader = None
@@ -186,7 +167,6 @@ class ServiceRegistry:
         self._uncertainty_calculator = None
         self._result_formatter = None
         
-        # Reply service components
         self._gemini_client = None
         self._language_detector = None
         self._reply_generator = None
@@ -239,14 +219,12 @@ class ServiceRegistry:
         }
         
         try:
-            # Check classification service
             if self._classification_service:
                 health['services']['classification'] = {
                     'status': 'active',
                     'model_loaded': self.get_classifier() is not None
                 }
             
-            # Check reply service
             if self._reply_service:
                 health['services']['reply'] = {
                     'status': 'active',
@@ -254,7 +232,6 @@ class ServiceRegistry:
                     'service_ready': self.get_reply_service().health_check()
                 }
             
-            # Check device manager
             if self._device_manager:
                 device_info = self.get_device_manager().get_device_info()
                 health['services']['device'] = {
@@ -331,11 +308,9 @@ class ServiceRegistry:
         """Cleanup all services and free resources"""
         self.logger.info("Cleaning up service registry...")
         
-        # Cleanup reply service components
         if self._reply_service_factory:
             self._reply_service_factory.cleanup()
         
-        # Reset all services
         self._service_factory = None
         self._reply_service_factory = None
         self._classification_service = None
